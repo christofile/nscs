@@ -1,0 +1,13 @@
+1 Write the output of the below tree in 
+
+In order：10 14 19 27 31 35 42
+Preorder: 27 14 16 19 35 31 42
+Post Order： 10 19 14 31 42 35 27
+
+2 . Delete the nodes 10, 27 and draw the resultant tree
+
+             31
+          /      \
+      14             35
+        \			\
+          19         42 
