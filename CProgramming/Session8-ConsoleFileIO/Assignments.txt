@@ -1,0 +1,240 @@
+1> Write down the two functions xgets() and xputs which work similar to the standard library functions gets() and puts().
+
+#include <stdio.h>
+#include <string.h>
+
+void xgets(char *str)
+{
+    scanf("%[^\n]s",str);
+}
+
+void xputs(char *str)
+{
+    printf("%s",str);
+}
+
+int main( )
+{
+    char str1[100];
+    printf("Please enter a string:\n");
+    //gets(str1);
+    xgets(str1);
+    xputs(str1);
+    return 0;
+}
+
+output£º
+Please enter a string:
+hello lily
+hello lily
+
+2> Write down a function getint() which would receive a numeric string from the keyboard, convert it to an integer number 
+   and return the integer to the calling function. A sample usage of getint() is shown below:
+  
+     main()
+     {
+	int a;
+	a = getint();
+	printf"You entered %d", a);
+      }
+
+#include <stdio.h>
+#include <string.h>
+
+
+int atoi(string)
+        register char *string;	/* String of ASCII digits, possibly
+                             * preceded by white space.  For bases
+                             * greater than 10, either lower- or
+                             * upper-case digits may be used.
+                             */
+    {
+        register int result = 0;
+        register unsigned int digit;
+        int sign;
+        
+        /*
+         * Skip any leading blanks.
+         */
+        
+        while (isspace(*string)) {
+            string += 1;
+        }
+        
+        /*
+         * Check for a sign.
+         */
+        
+        if (*string == '-') {
+            sign = 1;
+            string += 1;
+        } else {
+            sign = 0;
+            if (*string == '+') {
+                string += 1;
+            }
+        }
+        
+        for ( ; ; string += 1) {
+            digit = *string - '0';
+            if (digit > 9) {
+                break;
+            }
+            result = (10*result) + digit;
+        }
+        
+        if (sign) {
+            return -result;
+        }
+        return result;
+    }
+
+
+int main( )
+{
+    char str1[100];
+    int a;
+    printf("Please enter a numberic string:\n");
+    gets(str1);
+    a=atoi(str1);
+    printf("%d",a);
+    
+    return 0;
+}
+
+output:
+Please enter a numberic string:
+12345
+12345
+
+3> Learn and update the employee.c program given below :
+
+
+/* A menu-driven program for elementary database management */
+#include <stdio.h>
+main( )
+{
+ FILE  *fp, *ft ;
+ char  another, choice ;
+ struct emp   {
+   char  name[40] ;
+   int  age ;
+   float  bs ;
+  };
+
+ struct emp  e;
+ char  empname[40];
+ long int  recsize;
+
+ fp = fopen ( "EMP.DAT", "rb+" );
+
+ if ( fp == NULL )  {
+  fp = fopen ( "EMP.DAT", "wb+" );
+
+  if ( fp == NULL ) {
+    puts ( "Cannot open file" );
+    exit(1);
+  }
+ }
+
+ recsize = sizeof ( e ) ;
+
+ while ( 1 )
+ {
+   printf ( "\n1. Add Records" );
+   printf ( "\n2. List Records" );
+   printf ( "\n3. Modify Records" );
+   printf ( "\n4. Delete Records" );
+   printf ( "\n0. Exit" );
+   printf ( "\nYour choice" ) ;
+
+   fflush ( stdin );
+   choice = getchar( );
+
+   switch ( choice ) {
+    case '1' :
+       fseek ( fp, 0 , SEEK_END );
+       another = 'Y';
+
+       while ( another == 'Y' )
+       {
+         printf ( "\nEnter name, age and basic sal. " );
+         scanf ( "%s %d %f", e.name, &e.age, &e.bs );
+         fwrite ( &e, recsize, 1, fp );
+         printf ( "\nAdd another Record (Y/N) " );
+         fflush ( stdin );
+         another = getchar( );
+       }
+
+       break;
+    case '2' :
+       rewind ( fp ) ;
+
+       while ( fread ( &e, recsize, 1, fp ) == 1 )
+         printf ( "\n%s %d %f", e.name, e.age, e.bs ) ;
+
+       break ;
+
+    case '3' :
+       another = 'Y';
+
+       while ( another == 'Y' )
+       {
+         printf ( "\nEnter name of employee to modify " );
+         scanf ( "%s", empname );
+
+         rewind ( fp );
+         while ( fread ( &e, recsize, 1, fp ) == 1 )
+         {
+           if ( strcmp ( e.name, empname ) == 0 )
+           {
+             printf ( "\nEnter new name, age & bs" );
+             scanf ( "%s %d %f", e.name, &e.age, &e.bs );
+             fseek ( fp, - recsize, SEEK_CUR );
+             fwrite ( &e, recsize, 1, fp );
+             break;
+           }
+         }
+
+        printf ( "\nModify another Record (Y/N) " );
+        fflush ( stdin );
+        another = getchar( );
+       }
+
+       break;
+
+    case '4' :
+       another = 'Y';
+       while ( another == 'Y' )
+       {
+         printf ( "\nEnter name of employee to delete " );
+         scanf ( "%s", empname );
+
+         ft = fopen ( "TEMP.DAT", "wb" );
+
+         rewind ( fp );
+         while ( fread ( &e, recsize, 1, fp ) == 1 )
+         {
+           if ( strcmp ( e.name, empname ) != 0 )
+             fwrite ( &e, recsize, 1, ft );
+         }
+
+         fclose ( fp );
+         fclose ( ft );
+         remove ( "EMP.DAT" );
+         rename ( "TEMP.DAT", "EMP.DAT" );
+
+         fp = fopen ( "EMP.DAT", "rb+" );
+
+         printf ( "Delete another Record (Y/N) " );
+         fflush ( stdin );
+         another = getchar( );
+       }
+       break;
+
+   case '0' :
+      fclose ( fp );
+      exit(1);
+   }
+ }
+}
